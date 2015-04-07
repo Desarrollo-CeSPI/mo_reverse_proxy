@@ -5,6 +5,7 @@ def mo_reverse_proxy_build_config(app_id, d)
         id = "#{app_id}-#{app_name}-#{vhost}"
         proxy_data ||= Hash.new
         ret[id] = proxy_data
+        ret[id]['allow'] ||= data['allow']
         ret[id]['port'] ||= proxy_data['ssl'] ? "443" : "80"
         ret[id]['server_name'] ||= data['server_name']
         ret[id]['upstreams'] ||= Array(d['application_servers']).map {|x| "server #{x}"}
@@ -15,7 +16,7 @@ def mo_reverse_proxy_build_config(app_id, d)
   end
 end
 
-def mo_reverse_proxy_locations(upstream_name)
+def mo_reverse_proxy_locations(upstream_name, config)
   {
     "/" => {
       "proxy_set_header" => {
@@ -25,7 +26,7 @@ def mo_reverse_proxy_locations(upstream_name)
       },
       'proxy_redirect' => 'off',
       'proxy_pass' => "http://#{upstream_name}"
-    }
+    }.merge(config['allow'] ? {"allow" => config['allow'], "deny" => "all"} : {})
   }
 end
 
@@ -57,7 +58,7 @@ def _mo_reverse_proxy(name, config)
     listen Array(config['port']).map {|x| config['ssl'] ? "#{x} default_server ssl spdy" : x }
     upstream name => config['upstreams']
     server_name config['server_name']
-    locations mo_reverse_proxy_locations(name)
+    locations mo_reverse_proxy_locations(name, config)
     if config['ssl']
       ssl mo_reverse_proxy_certificates(config)
       options node['mo_reverse_proxy']['ssl_default_options'].merge(config['options'] || Hash.new)

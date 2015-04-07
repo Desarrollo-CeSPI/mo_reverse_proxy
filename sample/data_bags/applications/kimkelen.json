@@ -17,14 +17,16 @@
     "applications": {
       "frontend": {
         "server_name": "kimkelen.desarrollo.unlp.edu.ar",
+        "allow": ["10.0.0.0/24","12.2.2.0/24"],
         "options": {
           "client_max_body_size": "10m"
         },
         "reverse_proxy": {
           "ssl": {
             "ssl": true,
+            "allow": "10.1.2.0/24",
             "ssl_certificate": "test",
-              "port": ["443","4443"]
+            "port": ["443","4443"]
           },
           "plain": null,
           "old-name": {
