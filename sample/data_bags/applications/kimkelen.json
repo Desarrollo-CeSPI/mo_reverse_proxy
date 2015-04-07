@@ -1,0 +1,40 @@
+{
+  "id": "kimkelen",
+  "vagrant": {
+    "user": "kimkelen",
+    "group": "kimkelen",
+    "path": "/opt/applications/kimkelen",
+    "flavor": "demo",
+    "databases": {
+      "kimkelen": {
+        "name": "kimkelen",
+        "username": "kimkelen",
+        "password": "k19sjb1",
+        "cluster": "testing-01"
+      }
+    },
+    "application_servers": ["php-01.desarrollo.unlp.edu.ar"],
+    "applications": {
+      "frontend": {
+        "server_name": "kimkelen.desarrollo.unlp.edu.ar",
+        "options": {
+          "client_max_body_size": "10m"
+        },
+        "reverse_proxy": {
+          "ssl": {
+            "ssl": true,
+            "ssl_certificate": "test",
+              "port": ["443","4443"]
+          },
+          "plain": null,
+          "old-name": {
+            "server_name": "prueba.redirect.com",
+            "ssl": true,
+            "port": "443",
+            "redirect": "https://kimkelen.testing.unlp.edu.ar"
+          }
+        }
+      }
+    }
+  }
+}

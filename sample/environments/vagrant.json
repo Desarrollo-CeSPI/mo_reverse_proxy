@@ -1,0 +1,14 @@
+{
+    "chef_type": "environment",
+    "cookbook_versions": {},
+    "default_attributes": {
+      "resolver": {
+          "nameservers": ["163.10.95.50"],
+          "search": "desarrollo.unlp.edu.ar"
+      }
+    },
+    "description": "",
+    "json_class": "Chef::Environment",
+    "name": "vagrant",
+    "override_attributes": {}
+}
