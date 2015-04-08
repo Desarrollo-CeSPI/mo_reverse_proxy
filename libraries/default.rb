@@ -65,6 +65,7 @@ end
 
 
 def _mo_reverse_proxy(name, config)
+  raise "Can't configure a reverse proxy for #{name} with empty upstreams. Check appplication configuration" if config['upstreams'].empty?
   nginx_conf_file "#{name}.conf" do
     listen Array(config['port']).map {|x| config['ssl'] ? "#{x} ssl spdy" : x }
     upstream name => config['upstreams']
