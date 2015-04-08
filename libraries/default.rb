@@ -1,7 +1,17 @@
+include MoApplication::Nginx
+
+def mo_reverse_proxy_access_log(name)
+  ::File.join node['nginx']['log_dir'], "#{name}-access.log custom"
+end
+
+def mo_reverse_proxy_error_log(name)
+  ::File.join node['nginx']['log_dir'], "#{name}-error.log"
+end
+
 def mo_reverse_proxy_build_config(app_id, d)
   Hash.new.tap do |ret|
     (d['applications'] || Hash.new).each do |app_name, data|
-      data['reverse_proxy'].each do |vhost, proxy_data| 
+      (data['reverse_proxy'] || Hash.new).each do |vhost, proxy_data| 
         id = "#{app_id}-#{app_name}-#{vhost}"
         proxy_data ||= Hash.new
         ret[id] = proxy_data
@@ -9,7 +19,8 @@ def mo_reverse_proxy_build_config(app_id, d)
         ret[id]['port'] ||= proxy_data['ssl'] ? "443" : "80"
         ret[id]['server_name'] ||= data['server_name']
         ret[id]['upstreams'] ||= Array(d['application_servers']).map {|x| "server #{x}"}
-        ret[id]['options'] ||= data['options'] || Hash.new
+        ret[id]['options'] ||= (data['options'] || Hash.new).merge("access_log" => mo_reverse_proxy_access_log(app_id),
+                                                                   "error_log"  => mo_reverse_proxy_error_log(app_id))
         ret[id]['action'] = d['remove'] || proxy_data['remove'] ? :delete : :create
       end
     end
@@ -30,7 +41,7 @@ def mo_reverse_proxy_locations(upstream_name, config)
   }
 end
 
-def mo_reverse_proxy_certificates(config)
+def mo_reverse_proxy_certificates(config = {})
   Chef::Log.info("Trying to load #{node['mo_reverse_proxy']['certificate_databag']}/#{config['ssl_certificate'] || node['mo_reverse_proxy']['certificate_databag_item']}")
   certificates = Chef::EncryptedDataBagItem.load(node['mo_reverse_proxy']['certificate_databag'], config['ssl_certificate'] || node['mo_reverse_proxy']['certificate_databag_item'])
   {
@@ -55,7 +66,7 @@ end
 
 def _mo_reverse_proxy(name, config)
   nginx_conf_file "#{name}.conf" do
-    listen Array(config['port']).map {|x| config['ssl'] ? "#{x} default_server ssl spdy" : x }
+    listen Array(config['port']).map {|x| config['ssl'] ? "#{x} ssl spdy" : x }
     upstream name => config['upstreams']
     server_name config['server_name']
     locations mo_reverse_proxy_locations(name, config)
@@ -79,4 +90,11 @@ def mo_reverse_proxy(app)
       end
     end
   end
+end
+
+def catch_all_site
+  ssl_certificates = mo_reverse_proxy_certificates rescue nil
+  nginx_conf_catch_all_site( "default_catch_all_404",
+                             "ssl_certificates" => ssl_certificates,
+                             "ssl_options" => node['mo_reverse_proxy']['ssl_default_options'])
 end
