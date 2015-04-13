@@ -45,7 +45,7 @@ def mo_reverse_proxy_certificates(config = {})
   Chef::Log.info("Trying to load #{node['mo_reverse_proxy']['certificate_databag']}/#{config['ssl_certificate'] || node['mo_reverse_proxy']['certificate_databag_item']}")
   certificates = Chef::EncryptedDataBagItem.load(node['mo_reverse_proxy']['certificate_databag'], config['ssl_certificate'] || node['mo_reverse_proxy']['certificate_databag_item'])
   {
-    "public"  => certificates["cert"],
+    "public"  => certificates["cert"] + String(certificates['chain']),
     "private" => certificates["key"]
   }
 end
