@@ -59,6 +59,7 @@ def _mo_reverse_proxy_redirect(name, config)
     if config['ssl']
       ssl mo_reverse_proxy_certificates(config)
     end
+    action config['action']
     notifies :reload, "service[nginx]"
   end
 end
@@ -77,17 +78,21 @@ def _mo_reverse_proxy(name, config)
     else
       options config['options']
     end
+    action config['action']
     notifies :reload, "service[nginx]"
   end
 end
 
 def mo_reverse_proxy(app)
-  mo_data_bag_for_environment(node['mo_reverse_proxy']['applications_databag'], app).tap do |d|
-    mo_reverse_proxy_build_config(app, d).each do |id, data|
-      if data['redirect']
-        _mo_reverse_proxy_redirect(id, data)
-      else
-        _mo_reverse_proxy(id, data)
+  [].tap do |vhosts|
+    mo_data_bag_for_environment(node['mo_reverse_proxy']['applications_databag'], app).tap do |d|
+      mo_reverse_proxy_build_config(app, d).each do |id, data|
+        if data['redirect']
+          _mo_reverse_proxy_redirect(id, data)
+        else
+          _mo_reverse_proxy(id, data)
+        end
+        vhosts << "#{id}.conf"
       end
     end
   end

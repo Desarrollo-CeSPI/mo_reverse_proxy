@@ -55,7 +55,6 @@ GRAPH
   mo_reverse_proxy (1.0.0)
     certificate (~> 0.6.3)
     mo_application (~> 1.0.0)
-    nginx_conf (~> 0.2.4)
   mysql (6.0.20)
     smf (>= 0.0.0)
     yum-mysql-community (>= 0.0.0)

@@ -2,6 +2,7 @@ default['mo_reverse_proxy']['certificate_databag'] = 'certificates'
 default['mo_reverse_proxy']['certificate_databag_item'] = nil
 default['mo_reverse_proxy']['application_servers'] = []
 default['mo_reverse_proxy']['applications'] = []
+default['mo_reverse_proxy']['vhosts'] = []
 default['mo_reverse_proxy']['applications_databag'] = 'applications'
 default['mo_reverse_proxy']['ssl_default_options'] = {
   "ssl_protocols"             => "TLSv1.2 TLSv1.1 TLSv1",
