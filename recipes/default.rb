@@ -1,4 +1,5 @@
 include_recipe 'nginx::default'
+include_recipe 'nginx::http_stub_status_module'
 
 catch_all_site
 

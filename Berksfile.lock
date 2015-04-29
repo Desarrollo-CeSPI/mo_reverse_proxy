@@ -52,7 +52,7 @@ GRAPH
     mysql (~> 6.0.0)
     mysql-multi (~> 2.1.2)
     mysql_tuning (~> 0.4.0)
-  mo_reverse_proxy (1.0.0)
+  mo_reverse_proxy (1.0.1)
     certificate (~> 0.6.3)
     mo_application (~> 1.0.0)
   mysql (6.0.20)
