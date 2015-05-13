@@ -18,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     app.vm.box = "chef/ubuntu-14.04"
     app.vm.network :private_network, ip: "10.100.8.2"
     app.berkshelf.enabled = true
-    app.vm.provision :chef_solo do |chef|
+    app.vm.provision :chef_zero do |chef|
       chef.data_bags_path = 'sample/data_bags'
       chef.environment = 'vagrant'
       chef.environments_path = 'sample/environments'

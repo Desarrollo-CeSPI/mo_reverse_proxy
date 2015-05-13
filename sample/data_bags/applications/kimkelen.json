@@ -26,7 +26,15 @@
             "ssl": true,
             "allow": "10.1.2.0/24",
             "ssl_certificate": "test",
-            "port": ["443","4443"]
+            "port": ["443","4443"],
+            "options": {
+              "if": {
+                "$arg_pepe = 'algo'": {
+                  "rewrite": "http:/pepe.com permanent",
+                  "break": null
+                }
+              }
+            }
           },
           "plain": null,
           "old-name": {
