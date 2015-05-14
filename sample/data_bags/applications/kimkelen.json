@@ -30,8 +30,17 @@
             "options": {
               "if": {
                 "$arg_pepe = 'algo'": {
-                  "rewrite": "http:/pepe.com permanent",
+                  "rewrite": "^ http://pepe.com permanent",
                   "break": null
+                },
+                "$uri ~ ^\\/module.php\\/core\\/loginuserpass\\.php": {
+                  "set": "$auth_state \"A\""
+                },
+                "$arg_AuthState ~ ^$": {
+                  "set": "$auth_state \"${auth_state}A\""
+                },
+                "$auth_state = \"AA\"": {
+                  "rewrite": "^ https://usuarios.unlp.edu.ar break"
                 }
               }
             }
