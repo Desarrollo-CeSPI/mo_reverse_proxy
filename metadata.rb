@@ -4,6 +4,7 @@ maintainer_email 'YOUR_EMAIL'
 license          'All rights reserved'
 description      'Installs/Configures mo_reverse_proxy'
 long_description 'Installs/Configures mo_reverse_proxy'
+
 version          '1.2.0'
 
 depends   'certificate',      '~>0.6.3'
