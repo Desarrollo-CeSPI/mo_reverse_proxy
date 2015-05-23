@@ -1,7 +1,7 @@
 name             'mo_reverse_proxy'
-maintainer       'YOUR_NAME'
-maintainer_email 'YOUR_EMAIL'
-license          'All rights reserved'
+maintainer       'Christian A. Rodriguez & Leandro Di Tommaso'
+maintainer_email 'chrodriguez@gmail.com leandro.ditommaso@mikroways.net'
+license          'MIT'
 description      'Installs/Configures mo_reverse_proxy'
 long_description 'Installs/Configures mo_reverse_proxy'
 
