@@ -1,7 +1,7 @@
 include_recipe "logrotate"
 
 logrotate_app "mo-reverse-proxy" do
-  path      node['nginx']['log_dir']
+  path      "#{node['nginx']['log_dir']}/*.log"
   options   %w(missingok delaycompress notifempty compress sharedscripts)
   frequency 'weekly'
   minsize   '1M'
