@@ -5,7 +5,8 @@ license          'All rights reserved'
 description      'Installs/Configures mo_reverse_proxy'
 long_description 'Installs/Configures mo_reverse_proxy'
 
-version          '1.1.6'
+version          '1.1.7'
 
 depends   'certificate',      '~>0.6.3'
 depends   'mo_application',   '~>1.1.1'
+depends   'mo_collectd',      '~>1.0.5'
