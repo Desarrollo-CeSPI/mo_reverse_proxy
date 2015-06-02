@@ -92,6 +92,9 @@ def mo_reverse_proxy(app)
         else
           _mo_reverse_proxy(id, data)
         end
+        mo_collectd_nginx_log id, 
+          data['options']['access_log'], 
+          data['options']['error_log'] if data['options'] && data['options']['access_log'] && data['options']['error_log']
         vhosts << "#{id}.conf"
       end
     end
