@@ -4,8 +4,8 @@ node['mo_reverse_proxy']['applications'].each do |app_id|
     (app_data[node.chef_environment]['applications'] || Hash.new).each do |app_name, app|
       if app['reverse_proxy'] and app['reverse_proxy']['ssl']
 
-        server_name = Array(app['server_name']).first
-        check_name = "ssl-cert_#{server_name}_#{node.chef_environment}"
+      server_name = Array(app['server_name']).first
+      check_name = "ssl-cert_#{server_name}"
 
         nrpe_check check_name do
           command "#{node["mo_monitoring_client"]["install_directory"]}/check_ssl_cert"
