@@ -9,5 +9,6 @@ cookbook 'mo_mysql',            git: 'https://github.com/Desarrollo-CeSPI/mo_mys
 cookbook 'mo_monitoring_client',git: 'https://github.com/Desarrollo-CeSPI/mo_monitoring_client.git', tag: 'v1.0.1'
 
 cookbook 'mo_application', git: 'https://github.com/Desarrollo-CeSPI/mo_application.git', tag: 'v1.1.5'
+cookbook 'mo_collectd', git: 'https://github.com/Desarrollo-CeSPI/mo_collectd.git', tag: 'v1.0.5'
 
 metadata

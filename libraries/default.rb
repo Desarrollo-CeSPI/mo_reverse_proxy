@@ -85,6 +85,7 @@ end
 
 def mo_reverse_proxy(app)
   [].tap do |vhosts|
+    logs = {}
     mo_data_bag_for_environment(node['mo_reverse_proxy']['applications_databag'], app).tap do |d|
       mo_reverse_proxy_build_config(app, d).each do |id, data|
         if data['redirect']
@@ -92,8 +93,19 @@ def mo_reverse_proxy(app)
         else
           _mo_reverse_proxy(id, data)
         end
+        logs[app] = {
+          'access_log'  =>  data['options']['access_log'],
+          'error_log'   =>  data['options']['error_log'],
+          'action'      =>  data['action'] != :delete
+        } if data['options'] && data['options']['access_log'] && data['options']['error_log']
         vhosts << "#{id}.conf"
       end
+    end
+    logs.each do |id, data|
+      mo_collectd_nginx_log id, 
+          data['access_log'], 
+          data['error_log'],
+          data['action']
     end
   end
 end
