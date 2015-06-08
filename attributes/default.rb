@@ -9,10 +9,10 @@ default['mo_reverse_proxy']['ssl_default_options'] = {
   "ssl_prefer_server_ciphers" => "on",
   "ssl_ciphers"               => "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA512:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EDH+aRSA:EECDH:!aNULL:!eNULL:!LOW:!RC4:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS",
   "ssl_session_cache"         => "shared:TLS:2m",
-   "ssl_stapling"             => "on",
-   "ssl_stapling_verify"      => "on",
-   "resolver"                 => "8.8.4.4 8.8.8.8 valid=300s",
-   "resolver_timeout"         => "10s"
+  "ssl_stapling"              => "on",
+  "ssl_stapling_verify"       => "on",
+  "resolver"                  => "8.8.4.4 8.8.8.8 valid=300s",
+  "resolver_timeout"          => "10s"
 }
 default['nginx']['default_site_enabled'] = false
 default['nginx']['server_names_hash_bucket_size'] = 128
