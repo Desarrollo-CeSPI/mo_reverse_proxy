@@ -74,7 +74,7 @@ def _mo_reverse_proxy(name, config)
     locations mo_reverse_proxy_locations(name, config)
     if config['ssl']
       ssl mo_reverse_proxy_certificates(config)
-      options node['mo_reverse_proxy']['ssl_default_options'].merge(config['options'] || Hash.new)
+      options node['mo_reverse_proxy']['ssl_default_options'].merge(config['options'] || Hash.new).merge(ssl_dhparam: mo_reverse_proxy_ssl_dhparam_filename)
     else
       options config['options']
     end
@@ -115,4 +115,8 @@ def catch_all_site
   nginx_conf_catch_all_site( "default_catch_all_404",
                              "ssl_certificates" => ssl_certificates,
                              "ssl_options" => node['mo_reverse_proxy']['ssl_default_options'])
+end
+
+def mo_reverse_proxy_ssl_dhparam_filename
+  ::File.join(node["nginx"]["dir"], "dhparams.pem")
 end
