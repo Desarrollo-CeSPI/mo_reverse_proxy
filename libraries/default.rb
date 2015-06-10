@@ -19,6 +19,7 @@ def mo_reverse_proxy_build_config(app_id, d)
         ret[id]['port'] ||= proxy_data['ssl'] ? "443" : "80"
         ret[id]['server_name'] ||= data['server_name']
         ret[id]['upstreams'] ||= Array(d['application_servers']).map {|x| "server #{x}"}
+        ret[id]['upstream_options'] ||= (data['upstream_options'] || Hash.new)
         ret[id]['options'] ||= (data['options'] || Hash.new).merge("access_log" => mo_reverse_proxy_access_log(app_id),
                                                                    "error_log"  => mo_reverse_proxy_error_log(app_id))
         ret[id]['action'] = d['remove'] || proxy_data['remove'] ? :delete : :create
@@ -37,7 +38,9 @@ def mo_reverse_proxy_locations(upstream_name, config)
       },
       'proxy_redirect' => 'off',
       'proxy_pass' => "http://#{upstream_name}"
-    }.merge(config['allow'] ? {"allow" => config['allow'], "deny" => "all"} : {})
+    }.
+      merge(config['upstream_options']).
+      merge(config['allow'] ? {"allow" => config['allow'], "deny" => "all"} : {})
   }
 end
 
