@@ -19,6 +19,7 @@ def mo_reverse_proxy_build_config(app_id, d)
         ret[id]['port'] ||= proxy_data['ssl'] ? "443" : "80"
         ret[id]['server_name'] ||= data['server_name']
         ret[id]['upstreams'] ||= Array(d['application_servers']).map {|x| "server #{x}"}
+        ret[id]['upstream_options'] ||= (data['upstream_options'] || Hash.new)
         ret[id]['options'] ||= (data['options'] || Hash.new).merge("access_log" => mo_reverse_proxy_access_log(app_id),
                                                                    "error_log"  => mo_reverse_proxy_error_log(app_id))
         ret[id]['action'] = d['remove'] || proxy_data['remove'] ? :delete : :create
@@ -37,7 +38,9 @@ def mo_reverse_proxy_locations(upstream_name, config)
       },
       'proxy_redirect' => 'off',
       'proxy_pass' => "http://#{upstream_name}"
-    }.merge(config['allow'] ? {"allow" => config['allow'], "deny" => "all"} : {})
+    }.
+      merge(config['upstream_options']).
+      merge(config['allow'] ? {"allow" => config['allow'], "deny" => "all"} : {})
   }
 end
 
@@ -74,7 +77,7 @@ def _mo_reverse_proxy(name, config)
     locations mo_reverse_proxy_locations(name, config)
     if config['ssl']
       ssl mo_reverse_proxy_certificates(config)
-      options node['mo_reverse_proxy']['ssl_default_options'].merge(config['options'] || Hash.new)
+      options node['mo_reverse_proxy']['ssl_default_options'].merge(config['options'] || Hash.new).merge(ssl_dhparam: mo_reverse_proxy_ssl_dhparam_filename)
     else
       options config['options']
     end
@@ -115,4 +118,8 @@ def catch_all_site
   nginx_conf_catch_all_site( "default_catch_all_404",
                              "ssl_certificates" => ssl_certificates,
                              "ssl_options" => node['mo_reverse_proxy']['ssl_default_options'])
+end
+
+def mo_reverse_proxy_ssl_dhparam_filename
+  ::File.join(node["nginx"]["dir"], "dhparams.pem")
 end
