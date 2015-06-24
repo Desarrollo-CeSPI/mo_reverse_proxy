@@ -1,12 +1,4 @@
-execute "Generating DH group" do
-  command "openssl dhparam -out #{mo_reverse_proxy_ssl_dhparam_filename} 2048"
-  not_if "test -s #{mo_reverse_proxy_ssl_dhparam_filename}"
-end
-
-include_recipe 'nginx::default'
-include_recipe 'nginx::http_stub_status_module'
-
-catch_all_site
+include_recipe "mo_reverse_proxy::install"
 
 vhosts = []
 

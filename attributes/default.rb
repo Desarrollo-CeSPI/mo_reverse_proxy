@@ -14,12 +14,17 @@ default['mo_reverse_proxy']['ssl_default_options'] = {
   "resolver"                  => "8.8.4.4 8.8.8.8 valid=300s",
   "resolver_timeout"          => "10s"
 }
+
+default['mo_reverse_proxy']['use_upstream_repo'] = false #if true wi will install latest binary version from nginx site
+
+default['mo_reverse_proxy']['log_formats']['custom'] = {
+  'format' => '\'$server_name - $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"\''
+}
+
+
 default['nginx']['default_site_enabled'] = false
 default['nginx']['server_names_hash_bucket_size'] = 128
 default['nginx']['server_tokens'] = 'off'
 default['nginx']['client_max_body_size'] = '20m'
 default['nginx']['client_body_buffer_size'] = '128k'
-default['nginx']['log_formats'] = {
-  "custom" => '\'$server_name - $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"\''
-}
 default['nginx']['log_dir'] = '/var/log/nginx-reverse-proxy'

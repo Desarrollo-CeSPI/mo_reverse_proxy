@@ -13,7 +13,7 @@
         "cluster": "testing-01"
       }
     },
-    "application_servers": ["php-01.desarrollo.unlp.edu.ar"],
+    "application_servers": ["php-cluster-01.desarrollo.unlp.edu.ar"],
     "applications": {
       "frontend": {
         "server_name": "kimkelen.desarrollo.unlp.edu.ar",

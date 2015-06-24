@@ -6,9 +6,9 @@ cookbook 'chef-msttcorefonts',  git: 'https://github.com/captnswing/chef-msttcor
 cookbook 'mysql_tuning',        git: 'https://github.com/onddo/mysql_tuning-cookbook.git'
 cookbook 'mo_backup',           git: 'https://github.com/Desarrollo-CeSPI/mo_backup.git', tag: 'v0.1.34'
 cookbook 'mo_mysql',            git: 'https://github.com/Desarrollo-CeSPI/mo_mysql.git', tag: 'v1.1.0'
-cookbook 'mo_monitoring_client',git: 'https://github.com/Desarrollo-CeSPI/mo_monitoring_client.git', tag: 'v1.0.1'
+cookbook 'mo_monitoring_client',git: 'https://github.com/Desarrollo-CeSPI/mo_monitoring_client.git', tag: 'v1.0.12'
 
 cookbook 'mo_application', git: 'https://github.com/Desarrollo-CeSPI/mo_application.git', tag: 'v1.1.5'
-cookbook 'mo_collectd', git: 'https://github.com/Desarrollo-CeSPI/mo_collectd.git', tag: 'v1.0.5'
+cookbook 'mo_collectd', git: 'https://github.com/Desarrollo-CeSPI/mo_collectd.git', tag: 'v1.0.15'
 
 metadata

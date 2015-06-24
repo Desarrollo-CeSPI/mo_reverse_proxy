@@ -1,7 +1,16 @@
 include MoApplication::Nginx
 
 def mo_reverse_proxy_access_log(name)
-  ::File.join node['nginx']['log_dir'], "#{name}-access.log custom"
+  node['mo_reverse_proxy']['log_formats'].map  do |log_name, data|
+    (data['config'] || '%{log} %{name}') % {
+      :log => ::File.join(node['nginx']['log_dir'], "#{data['prefix']}#{name}-access.log"),
+      :name => log_name
+    }
+  end
+end
+
+def mo_reverse_proxy_to_nginx_log_formats
+  Hash[node['mo_reverse_proxy']['log_formats'].map { |log_name, data| [log_name,data['format']] }]
 end
 
 def mo_reverse_proxy_error_log(name)
@@ -20,8 +29,9 @@ def mo_reverse_proxy_build_config(app_id, d)
         ret[id]['server_name'] ||= data['server_name']
         ret[id]['upstreams'] ||= Array(d['application_servers']).map {|x| "server #{x}"}
         ret[id]['upstream_options'] ||= (data['upstream_options'] || Hash.new)
-        ret[id]['options'] ||= (data['options'] || Hash.new).merge("access_log" => mo_reverse_proxy_access_log(app_id),
-                                                                   "error_log"  => mo_reverse_proxy_error_log(app_id))
+        ret[id]['options'] ||= (data['options'] || Hash.new)
+        ret[id]['options'].merge!("access_log" => mo_reverse_proxy_access_log(app_id),
+                                  "error_log"  => mo_reverse_proxy_error_log(app_id))
         ret[id]['action'] = d['remove'] || proxy_data['remove'] ? :delete : :create
       end
     end
@@ -68,7 +78,7 @@ def _mo_reverse_proxy_redirect(name, config)
 end
 
 
-def _mo_reverse_proxy(name, config)
+def _mo_reverse_proxy_direct(name, config)
   raise "Can't configure a reverse proxy for #{name} with empty upstreams. Check appplication configuration" if config['upstreams'].empty?
   nginx_conf_file "#{name}.conf" do
     listen Array(config['port']).map {|x| config['ssl'] ? "#{x} ssl spdy" : x }
@@ -88,29 +98,23 @@ end
 
 def mo_reverse_proxy(app)
   [].tap do |vhosts|
-    logs = {}
-    mo_data_bag_for_environment(node['mo_reverse_proxy']['applications_databag'], app).tap do |d|
-      mo_reverse_proxy_build_config(app, d).each do |id, data|
-        if data['redirect']
-          _mo_reverse_proxy_redirect(id, data)
-        else
-          _mo_reverse_proxy(id, data)
-        end
-        logs[app] = {
-          'access_log'  =>  data['options']['access_log'],
-          'error_log'   =>  data['options']['error_log'],
-          'action'      =>  data['action'] != :delete
-        } if data['options'] && data['options']['access_log'] && data['options']['error_log']
-        vhosts << "#{id}.conf"
+    mo_reverse_proxy_block(app) do |id, data|
+      if data['redirect']
+        _mo_reverse_proxy_redirect(id, data)
+      else
+        _mo_reverse_proxy_direct(id, data)
       end
-    end
-    logs.each do |id, data|
-      mo_collectd_nginx_log id, 
-          data['access_log'], 
-          data['error_log'],
-          data['action']
+      vhosts << "#{id}.conf"
     end
   end
+end
+
+def mo_reverse_proxy_block(app, &block)
+    mo_data_bag_for_environment(node['mo_reverse_proxy']['applications_databag'], app).tap do |d|
+      mo_reverse_proxy_build_config(app, d).each do |id, data|
+        block.call(id, data)
+      end
+    end
 end
 
 def catch_all_site
