@@ -38,8 +38,12 @@ def mo_reverse_proxy_build_config(app_id, d)
   end
 end
 
+def mo_reverse_proxy_custom_locations(config)
+  config['locations'] || {}
+end
+
 def mo_reverse_proxy_locations(upstream_name, config)
-  {
+  mo_reverse_proxy_custom_locations(config).merge(
     "/" => {
       "proxy_set_header" => {
         "X-Forwarded-For" => "$proxy_add_x_forwarded_for",
@@ -48,10 +52,9 @@ def mo_reverse_proxy_locations(upstream_name, config)
       },
       'proxy_redirect' => 'off',
       'proxy_pass' => "http://#{upstream_name}"
-    }.
+      }.
       merge(config['upstream_options']).
-      merge(config['allow'] ? {"allow" => config['allow'], "deny" => "all"} : {})
-  }
+      merge(config['allow'] ? {"allow" => config['allow'], "deny" => "all"} : {}))
 end
 
 def mo_reverse_proxy_certificates(config = {})

@@ -43,6 +43,11 @@
                   "rewrite": "^ https://usuarios.unlp.edu.ar break"
                 }
               }
+            },
+            "locations": {
+              "/pepe": {
+                "allow": "163.10.0.0/16"
+              }
             }
           },
           "plain": null,
