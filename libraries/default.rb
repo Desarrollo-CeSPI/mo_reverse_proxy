@@ -38,23 +38,31 @@ def mo_reverse_proxy_build_config(app_id, d)
   end
 end
 
-def mo_reverse_proxy_custom_locations(config)
-  config['locations'] || {}
+def mo_reverse_proxy_custom_locations(upstream_name, config)
+  proxied_locations = config['proxied_locations'] || {}
+  proxied_locations.each do  |name, data|
+    data.merge! mo_reverse_proxy_location_options(upstream_name)
+  end
+  (config['locations'] || {}).merge(proxied_locations)
+end
+
+def mo_reverse_proxy_location_options(upstream_name)
+  {
+    "proxy_set_header" => {
+      "X-Forwarded-For" => "$proxy_add_x_forwarded_for",
+      "X-Forwarded-Proto" => "$scheme",
+      "Host" => "$http_host"
+    },
+    'proxy_redirect' => 'off',
+    'proxy_pass' => "http://#{upstream_name}"
+  }
 end
 
 def mo_reverse_proxy_locations(upstream_name, config)
-  mo_reverse_proxy_custom_locations(config).merge(
-    "/" => {
-      "proxy_set_header" => {
-        "X-Forwarded-For" => "$proxy_add_x_forwarded_for",
-        "X-Forwarded-Proto" => "$scheme",
-        "Host" => "$http_host"
-      },
-      'proxy_redirect' => 'off',
-      'proxy_pass' => "http://#{upstream_name}"
-      }.
+  mo_reverse_proxy_custom_locations(upstream_name, config).merge(
+    "/" => mo_reverse_proxy_location_options(upstream_name).
       merge(config['upstream_options']).
-      merge(config['allow'] ? {"allow" => config['allow'], "deny" => "all"} : {}))
+      merge(config['allow'] ? {"allow" => Array(config['allow']) + [node.ipaddress], "deny" => "all"} : {}))
 end
 
 def mo_reverse_proxy_certificates(config = {})
