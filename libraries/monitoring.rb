@@ -3,7 +3,7 @@ def server_name_for(data)
 end
 
 def mo_reverse_proxy_monitor_http_expected_codes
-  "200,401,301"
+  "200,401,301,302"
 end
 
 def mo_reverse_proxy_monitor_ssl(data)
