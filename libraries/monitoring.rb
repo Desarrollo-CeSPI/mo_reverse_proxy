@@ -20,9 +20,10 @@ end
 def mo_reverse_proxy_monitor_http(data)
   check_name = "check-http_#{server_name_for data}"
   check_name += "-ssl" if data['ssl']
+  extra_arguments = data['monitoring'] && data['monitoring']['http_check'] ? data['monitoring']['http_check'] : ''
   nrpe_check check_name do
     command "#{node['nrpe']['plugin_dir']}/check_http"
-    parameters "-e #{mo_reverse_proxy_monitor_http_expected_codes} -I #{node.ipaddress} -H #{server_name_for data} #{data['ssl'] ? '-S': ''}"
+    parameters "-e #{mo_reverse_proxy_monitor_http_expected_codes} -I #{node.ipaddress} -H #{server_name_for data} #{data['ssl'] ? '-S': ''} #{extra_arguments}"
     notifies :restart, "service[#{node['nrpe']['service_name']}]"
   end
 end

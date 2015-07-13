@@ -24,6 +24,7 @@ def mo_reverse_proxy_build_config(app_id, d)
         id = "#{app_id}-#{app_name}-#{vhost}"
         proxy_data ||= Hash.new
         ret[id] = proxy_data
+        ret[id]['monitoring'] ||= data['monitoring']
         ret[id]['allow'] ||= data['allow']
         ret[id]['port'] ||= proxy_data['ssl'] ? "443" : "80"
         ret[id]['server_name'] ||= data['server_name']
