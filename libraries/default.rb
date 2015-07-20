@@ -54,6 +54,7 @@ def mo_reverse_proxy_location_options(upstream_name)
       "X-Forwarded-Proto" => "$scheme",
       "Host" => "$http_host"
     },
+    'proxy_intercept_errors' => 'on',
     'proxy_redirect' => 'off',
     'proxy_pass' => "http://#{upstream_name}"
   }
