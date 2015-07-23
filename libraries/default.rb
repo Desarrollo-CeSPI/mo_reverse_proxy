@@ -60,11 +60,36 @@ def mo_reverse_proxy_location_options(upstream_name)
   }
 end
 
+def _mo_reverse_proxy_location_configuration_for_error(name,code)
+  {
+    "@#{name}" => {
+      "root" => node['mo_application']['error_pages_location'],
+      "try_files" => "$uri /#{code}.html =#{code}"
+    }
+  }
+end
+
+def mo_reverse_proxy_error_locations
+  _mo_reverse_proxy_location_configuration_for_error("forbidden", 403)
+    .merge(_mo_reverse_proxy_location_configuration_for_error("not_found", 404))
+    .merge(_mo_reverse_proxy_location_configuration_for_error("server_error", 500))
+    .merge(_mo_reverse_proxy_location_configuration_for_error("server_overloaded", 502))
+end
+
+def mo_reverse_proxy_options_for_errors
+  {
+    "error_page 403" => "= @forbidden",
+    "error_page 404" => "= @not_found",
+    "error_page 500" => "= @server_error",
+    "error_page 502" => "= @server_overloaded"
+  }
+end
+
 def mo_reverse_proxy_locations(upstream_name, config)
   mo_reverse_proxy_custom_locations(upstream_name, config).merge(
     "/" => mo_reverse_proxy_location_options(upstream_name).
       merge(config['upstream_options']).
-      merge(config['allow'] ? {"allow" => Array(config['allow']) + [node.ipaddress], "deny" => "all"} : {}))
+      merge(config['allow'] ? {"allow" => Array(config['allow']) + [node.ipaddress], "deny" => "all"} : {})).merge(mo_reverse_proxy_error_locations)
 end
 
 def mo_reverse_proxy_certificates(config = {})
@@ -100,9 +125,9 @@ def _mo_reverse_proxy_direct(name, config)
     locations mo_reverse_proxy_locations(name, config)
     if config['ssl']
       ssl mo_reverse_proxy_certificates(config)
-      options node['mo_reverse_proxy']['ssl_default_options'].merge(config['options'] || Hash.new).merge(ssl_dhparam: mo_reverse_proxy_ssl_dhparam_filename)
+      options node['mo_reverse_proxy']['ssl_default_options'].merge(config['options'] || Hash.new).merge(ssl_dhparam: mo_reverse_proxy_ssl_dhparam_filename).merge(mo_reverse_proxy_options_for_errors)
     else
-      options config['options']
+      options config['options'].merge(mo_reverse_proxy_options_for_errors)
     end
     action config['action']
     notifies :reload, "service[nginx]"
