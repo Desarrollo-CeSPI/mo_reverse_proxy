@@ -1,8 +1,11 @@
+node.set['nginx']['client_max_body_size'] = '40m'
 node.set['nginx']['log_formats'] = mo_reverse_proxy_to_nginx_log_formats
+
 if node['mo_reverse_proxy']['use_upstream_repo']
   node.set['nginx']['upstream_repository'] = "http://nginx.org/packages/#{node['platform']}" if node['platform_family'] == 'ubuntu'
   include_recipe 'nginx::repo'
 end
+
 include_recipe 'nginx::default'
 include_recipe 'nginx::http_stub_status_module'
 
