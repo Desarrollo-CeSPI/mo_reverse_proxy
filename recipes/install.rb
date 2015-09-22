@@ -1,4 +1,4 @@
-node.set['nginx']['client_max_body_size'] = '40m'
+node.set['nginx']['client_max_body_size'] = '250m'
 node.set['nginx']['log_formats'] = mo_reverse_proxy_to_nginx_log_formats
 
 if node['mo_reverse_proxy']['use_upstream_repo']
