@@ -12,7 +12,7 @@ def mo_reverse_proxy_monitor_ssl(data)
     command "#{node["mo_monitoring_client"]["install_directory"]}/check_ssl_cert"
     warning_condition node['mo_monitoring_client']['plugins']['check_ssl_cert']['warning_condition']
     critical_condition node['mo_monitoring_client']['plugins']['check_ssl_cert']['critical_condition']
-    parameters "-A -H #{server_name_for data}"
+    parameters "-A -H #{server_name_for data} -N"
     notifies :restart, "service[#{node['nrpe']['service_name']}]"
   end
 end
