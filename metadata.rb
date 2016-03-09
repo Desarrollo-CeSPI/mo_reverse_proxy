@@ -5,7 +5,7 @@ license          'MIT'
 description      'Installs/Configures mo_reverse_proxy'
 long_description 'Installs/Configures mo_reverse_proxy'
 
-version          '1.2.10'
+version          '1.2.11'
 
 depends 'certificate',            '~>0.6.3'
 depends 'mo_application',         '~>1.1.1'

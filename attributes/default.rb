@@ -23,7 +23,7 @@ default['mo_reverse_proxy']['log_formats']['custom'] = {
 
 
 default['nginx']['default_site_enabled'] = false
-default['nginx']['server_names_hash_bucket_size'] = 128
+default['nginx']['server_names_hash_bucket_size'] = 256
 default['nginx']['server_tokens'] = 'off'
 default['nginx']['client_max_body_size'] = '20m'
 default['nginx']['client_body_buffer_size'] = '128k'
